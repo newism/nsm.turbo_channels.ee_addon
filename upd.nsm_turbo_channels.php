@@ -14,7 +14,7 @@ require PATH_THIRD.'nsm_turbo_channels/config.php';
  * @see				http://expressionengine.com/public_beta/docs/development/modules.html#update_file
  */
 
-class Nsm_turbo_upd
+class Nsm_turbo_channels_upd
 {
 	public  $version = NSM_TURBO_CHANNELS_VERSION;
 	public  $addon_id = NSM_TURBO_CHANNELS_ADDON_ID;
