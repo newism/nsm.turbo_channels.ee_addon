@@ -14,7 +14,7 @@
  * $this->EE->nsm_turbo_channels_helper->addJS('../lib/jquery.cookie.js');
  * 
  * @package			NsmTurboChannels
- * @version			1.1.2
+ * @version			0.0.1
  * @author			Leevi Graham <http://leevigraham.com> - Technical Director, Newism
  * @copyright 		Copyright (c) 2007-2010 Newism <http://newism.com.au>
  * @license 		Commercial - please see LICENSE file included with this distribution
