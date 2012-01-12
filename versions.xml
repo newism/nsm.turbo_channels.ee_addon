@@ -3,7 +3,7 @@
  * XML Changelog for NSM Turbo Channels
  *
  * @package			NsmTurboChannels
- * @version			0.0.1
+ * @version			0.1.0
  * @author			Leevi Graham <http://leevigraham.com>
  * @copyright 		Copyright (c) 2007-2010 Newism <http://newism.com.au>
  * @license 		Commercial - please see LICENSE file included with this distribution
@@ -18,17 +18,17 @@
 		<link>https://github.com/newism/nsm.example_addon.ee_addon/versions.xml</link>
 		<description>Most recent changes with links to updates.</description>
 		<item>
-			<title>Version 0.0.1</title>
-			<ee_addon:version>0.0.1</ee_addon:version>
-			<link>https://github.com/newism/nsm.example_addon.ee_addon/tree/0.0.1</link>
-			<pubDate>Thursday, 25 Feb 2010 11:43:55 +1100</pubDate>
+			<title>Version 0.1.0</title>
+			<ee_addon:version>0.1.0</ee_addon:version>
+			<link>https://github.com/newism/nsm.example_addon.ee_addon/tree/0.1.0</link>
+			<pubDate>Friday, 25 Feb 2012 11:43:55 +1100</pubDate>
 			<description><![CDATA[
 				<ul>
 					<li>Initial release</li>
 				</ul>
 			]]>
 			</description>
-			<enclosure url="https://github.com/newism/nsm.example_addon.ee_addon/zipball/0.0.1" length="16261" type="application/zip" />
+			<enclosure url="https://github.com/newism/nsm.example_addon.ee_addon/zipball/0.1.0" length="16261" type="application/zip" />
 		 </item>
 	</channel>
 </rss>
