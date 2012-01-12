@@ -1,0 +1,123 @@
+<h2 class="tag" id="exp:channel:entries"><code>&#123;exp:channel:entries&#125;</code></h2>
+<pre data-tag='exp:channel:entries' class='tag-description'><code>&#123;exp:channel:entries
+([
+    ...
+    string <span class="param">disable</span>
+    string <span class="param">db_ref</span>
+    string <span class="param">custom_fields</span>
+])&#125;</code></pre>
+
+<p>NSM Turbo Channels is an extension that affects any tag or third party add-on that uses the <a href="http://expressionengine.com/user_guide/modules/channel/channel_entries.html">Channel</a> module and its related extension hooks.</p>
+<p>The tag parameters listed on this page are the parameters that have been extended or are added by NSM Turbo Channels.</p>
+
+<h3 id="exp:channel:entries.parameters" class="params">Parameters</h3>
+
+<h4 data-tag="exp:channel:entries" title="disable"><code>disable</code> <small>[optional]</small></h4>
+<pre><kbd>disable="channel_meta|view_counts"</kbd></pre>
+<p>Prevent columns of data from being retrieved in the database query. This parameter has been extended to include the following additional options.</p>
+<p>Please be aware that by disabling chunks of data from the database query you are altering the behaviour of the Channel Entries. If your tags are not responding as you believe that they should, try adjusting the options in the <code>disable</code> parameter.</p>
+<dl>
+	<dt>members</dt>
+	<dd>
+		<p>Including this option prevents the <code>members</code> table from being joined to the database query.</p>
+		<ul>
+			<li>username</li>
+			<li>email</li>
+			<li>url</li>
+			<li>screen_name</li>
+			<li>location</li>
+			<li>occupation</li>
+			<li>interests</li>
+			<li>aol_im</li>
+			<li>yahoo_im</li>
+			<li>msn_im</li>
+			<li>icq</li>
+			<li>signature</li>
+			<li>sig_img_filename</li>
+			<li>sig_img_width</li>
+			<li>sig_img_height</li>
+			<li>avatar_filename</li>
+			<li>avatar_width</li>
+			<li>avatar_height</li>
+			<li>photo_filename</li>
+			<li>photo_width</li>
+			<li>photo_height</li>
+			<li>group_id</li>
+			<li>member_id</li>
+			<li>bday_d</li>
+			<li>bday_m</li>
+			<li>bday_y</li>
+			<li>bio</li>
+		</ul>
+	</dd>
+	<dt>channel_meta</dt>
+	<dd>
+		<p>This option prevents the <code>channels</code> table from joining the database query.</p>
+		<ul>
+			<li>channel_title</li>
+			<li>channel_name</li>
+			<li>channel_url</li>
+			<li>comment_url</li>
+			<li>comment_moderate</li>
+			<li>channel_html_formatting</li>
+			<li>channel_allow_img_urls</li>
+			<li>channel_auto_link_urls</li>
+			<li>comment_system_enabled</li>
+		</ul>
+	</dd>
+	<dt>comments</dt>
+	<dd>
+		<p>If comments data is not required for the Channel Entries then include this option to omit the relevant table columns.</p>
+		<ul>
+			<li>allow_comments</li>
+			<li>comment_expiration_date</li>
+			<li>recent_comment_date</li>
+			<li>comment_total</li>
+		</ul>
+	</dd>
+	<dt>view_counts</dt>
+	<dd>
+		<p>Ignores database columns storing information related to view tracking.</p>
+		<ul>
+			<li>view_count_one</li>
+			<li>view_count_two</li>
+			<li>view_count_three</li>
+			<li>view_count_four</li>
+		</ul>
+	</dd>
+	<dt>entry_dates</dt>
+	<dd>
+		<p>Disables date-related database columns from the query.</p>
+		<ul>
+			<li>dst_enabled</li>
+			<li>entry_date</li>
+			<li>year</li>
+			<li>month</li>
+			<li>day</li>
+			<li>edit_date</li>
+			<li>expiration_date</li>
+		</ul>
+	</dd>
+	<dt>entry_meta</dt>
+	<dd>
+		<p>This option will not be used often as it disables database columns such as the <code>title</code>, <code>url_title</code> and <code>status</code>. It is most likely to be used in circumstances where only the <code>entry_id</code> is the only data that is needed.</p>
+		<ul>
+			<li>forum_topic_id</li>
+			<li>author_id</li>
+			<li>ip_address</li>
+			<li>title</li>
+			<li>url_title</li>
+			<li>status</li>
+			<li>sticky</li>
+			<li>entry_site_id</li>
+		</ul>
+	</dd>
+</dl>
+
+<h4 data-tag="exp:channels:entries" title="db_ref"><code>db_ref</code> <small>[optional]</small></h4>
+<pre><kbd>db_ref="eg Return all news items"</kbd></pre>
+<p>The value of the <code>db_ref</code> parameter is added as a comment to the SQL statement sent to the database. The value is processed by a regular expression to only send a safe string to the database. Expect characters to be removed from the string value.</p>
+
+<h4 data-tag="exp:channels:entries" title="custom_fields"><code>custom_fields</code> <small>[optional]</small></h4>
+<pre><kbd>custom_fields="my_custom_field|another_custom_field"</kbd></pre>
+<p>Specify a pipe-delimited list of custom fields that will be included in the database query. Choosing only the data columns that you need will yield a performance improvement by trimming un-needed data.</p>

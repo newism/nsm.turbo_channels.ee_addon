@@ -1,0 +1,53 @@
+<h2>Requirements</h2> 
+<p>Technical requirements include:</p> 
+<ul> 
+	<li><a href="http://expressionengine.com">ExpressionEngine 2.2+</a></li>
+	<li><a href="http://php.net">PHP 5.2+</a></li> 
+	<li>A modern browser: <a href="http://firefox.com">Firefox</a>, <a href="http://www.apple.com/safari/download/">Safari</a>, <a href="http://www.google.com/chrome/">Google Chrome</a> or IE8+</li> 
+</ul> 
+ 
+<h2>Installation</h2> 
+<ol> 
+	<li><a href="#download">Download</a> the latest version of NSM Turbo Channels</li>
+	<li>Extract the .zip file to your desktop</li>
+	<li>Copy <code class="folder-path">system/expressionengine/third_party/nsm_turbo_channels</code> to <code class="folder-path">system/expressionengine/third_party</code></li> 
+	<li><a href="#activation">Activate</a> NSM Turbo Channels in the ExpressionEngine Control Panel</li>
+</ol>
+
+<h2 id="activation">Activation</h2>
+<ol>
+	<li>Log into your control panel</li>
+	<li>Browse to <a href="http://expressionengine.com/user_guide/cp/add-ons/extension_manager.html" target="_blank">Addons → Extensions</a></li>
+	<li>Enable the NSM Turbo Channels extension</li>
+</ol>
+
+<h2 id="extension_hook"><code>channel_entries_query_end</code> hook</h2>
+<p>NSM Turbo Channels requires a new extension hook to be added to the end of the Channel module's <code>build_sql_query</code> method. This extension hook allows NSM Turbo Channels to alter the database query that returns the Channel entry data.</p>
+<pre><kbd>function build_sql_query($qstring = '')
+&#123;
+  &hellip;
+  $this->sql .= $end;
+
+  // Add this code to the end of the build_sql_query() method around line 2856
+  // in /system/expressionengine/modules/channel/mod.channel.php
+  if ($this->EE->extensions->active_hook('channel_entries_query_end') === TRUE) &#123;
+    $this->sql = $this->EE->extensions->call('channel_entries_query_end', $this, $this->sql);
+  &#125;
+&#125;</kbd></pre>
+
+<h2 id="configuration">Configuration</h2>
+<h3>Extension settings</h3>
+<h4>Enable?</h4>
+<dl>
+	<dt>Enable?</dt>
+	<dd>If this is set to <code>Yes</code> NSM Turbo Channels will be enabled and the extra parameters described in the <a href="/nsm-turbo-channels/tag-reference">tag reference</a> will function. If this is set to <code>No</code> the extension hook will still be used however the database query and query result will be unaltered.</dd>
+</dl>
+<h4>Playa short-tags</h4>
+<p>These options allow you to alter the <code>disable</code> parameter of the P &amp; T Playa custom field tags (<code>&#123;my_playa_custom_field&#125; &hellip; &#123;/my_playa_custom_field&#125;</code>). Playa module tags are not affected by this (<code>&#123;exp:playa:children&#125; &hellip; &#123;/exp:playa:children&#125;</code>).</p>
+<p>This is useful if there are a lot of Playa tags in one page. For example if articles are linked to a publication and you need to show each article's publication on an index page. This will normally incur a performance loss as all data for the linked publication would be returned from the database. Adjusting the <code>disable</code> parameter can reduce the cost in server resources.</p>
+<dl>
+	<dt>Override Playa short-tags?</dt>
+	<dd>Choose whether or not to override the <code>disable</code> parameter of short hand Playa custom field tags. If a template is not functioning as expected try setting this option to <code>No</code> to leave the tags as-is.</dd>
+	<dt>Default disable parameter</dt>
+	<dd>Specify the new value for <code>disable</code> parameter for Playa custom field tags.</dd>
+</dl>

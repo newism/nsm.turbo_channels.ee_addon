@@ -1,0 +1,28 @@
+<h2>Specify custom fields</h2>
+<p>Uses the <a href="/nsm-turbo-channels/tag-reference/#exp:channel:entries:custom_fields"><code>&#123;custom_fields&#125;</code></a> parameter to include only the custom fields that are needed. In the following example we only want to include two custom fields to be included. The first two custom fields will be replaced as normal. However because the columns for the remaining custom fields are not included in the database query, the tags are not replaced as expected.</p>
+<pre><kbd>// input tag-data
+&#123;exp:channel:entries
+  custom_fields="custom_field_1|custom_field_2"
+&#125;
+  &lt;h2&gt;&#123;title&#125;&lt;/h2&gt;
+  &lt;ul&gt;
+    &lt;li&gt;custom_field_1: &lt;strong&gt;&#123;custom_field_1&#125;&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;custom_field_2: &lt;strong&gt;&#123;custom_field_2&#125;&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;custom_field_3: &lt;strong&gt;&#123;custom_field_3&#125;&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;custom_field_4: &lt;strong&gt;&#123;custom_field_4&#125;&lt;/strong&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&#123;/exp:channel:entries&#125;
+</kbd></pre>
+
+<pre><kbd>// output tag-data
+// note that the third and fourth custom fields are not replaced.
+// this is expected behaviour as we only requested the first and second fields in the custom_fields parameter
+  &lt;h2&gt;Entry Title&lt;/h2&gt;
+  &lt;ul&gt;
+    &lt;li&gt;custom_field_1: &lt;strong&gt;Value for custom field 1&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;custom_field_2: &lt;strong&gt;Value for custom field 2&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;custom_field_3: &lt;strong&gt;&#123;custom_field_3&#125;&lt;/strong&gt;&lt;/li&gt;
+    &lt;li&gt;custom_field_4: &lt;strong&gt;&#123;custom_field_4&#125;&lt;/strong&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&#123;/exp:channel:entries&#125;
+</kbd></pre>
