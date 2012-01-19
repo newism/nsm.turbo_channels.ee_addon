@@ -1,0 +1,27 @@
+<h2>Data is not being output as expected</h2>
+<p>If data is not being output the way that you expect it to you may need to remove <code>channel_meta</code> from the <code>disable</code> parameters.</p>
+<p>A common example of this behaviour:</p>
+<pre><kbd>// channel_meta enabled
+&#123;exp:channel:entries
+  channel="blog"
+  limit="1"
+&#125;
+  {your_custom_field}
+&#123;/exp:channel:entries&#125;
+
+// output HTML
+&lt;img src="{filedir_1}image_url.jpg" class="image" width="240" height="160" /&gt;
+</kbd></pre>
+
+<pre><kbd>// channel_meta disabled
+&#123;exp:channel:entries
+  channel="blog"
+  limit="channel_meta"
+&#125;
+  {your_custom_field}
+&#123;/exp:channel:entries&#125;
+
+// output HTML
+{filedir_1}image_url.jpg
+</kbd></pre>
+<p>This change in output data occurs because the channels table is no longer joined to the database query and ExpressionEngine will strip the HTML from the data as a fallback in the event that the channel options are not present.</p>
