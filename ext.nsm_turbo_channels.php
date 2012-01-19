@@ -58,15 +58,15 @@ class Nsm_turbo_channels_ext
 			define('SITE_ID', $EE->config->item('site_id'));
 		}
 
+		// Init the cache
+		$this->_initCache();
+		
 		// Load the addons model and check if the the extension is installed
 		// Get the settings if it's installed
 		$EE->load->model('addons_model');
-		if($EE->addons_model->extension_installed($this->addon_id)) {
+		if ($EE->addons_model->extension_installed($this->addon_id)) {
 			$this->settings = $this->_getSettings();
 		}
-
-		// Init the cache
-		$this->_initCache();
 	}
 
 	/**
@@ -76,17 +76,17 @@ class Nsm_turbo_channels_ext
 	 * @return void
 	 */
 	private function _initCache() {
-
+		
 		$EE =& get_instance();
 
 		// Sort out our cache
 		// If the cache doesn't exist create it
-		if (! isset($EE->session->cache[$this->addon_id])) {
-			$EE->session->cache[$this->addon_id] = array();
+		if (empty($EE->session->cache[$this->addon_id][SITE_ID])) {
+			$EE->session->cache[$this->addon_id][SITE_ID] = array();
 		}
 
-		// Assig the cache to a local class variable
-		$this->cache =& $EE->session->cache[$this->addon_id];
+		// Assign the cache to a local class variable
+		$this->cache =& $EE->session->cache[$this->addon_id][SITE_ID];
 	}
 
 
@@ -100,25 +100,24 @@ class Nsm_turbo_channels_ext
 	public function channel_entries_query_end($Channel, $sql)
 	{
 		// disabled? return now.
-		if( empty($this->settings['enabled']) ) {
+		if (empty($this->settings['enabled'])) {
 			return $sql;
 		}
-		
 		
 		$disable_param = $Channel->EE->TMPL->fetch_param('disable');
 		$cfields_param = $Channel->EE->TMPL->fetch_param('custom_fields');
 		$db_ref_param = $Channel->EE->TMPL->fetch_param('db_ref');
-		if($disable_param == false && $cfields_param == false && $db_ref_param == false) {
-			return $row;
+		if ($disable_param == false && $cfields_param == false && $db_ref_param == false) {
+			return $sql;
 		}
 		
 		$EE =& get_instance();
 
 		$disable = $EE->TMPL->fetch_param('disable');
 
-		if($this->settings['playa']['do_override'] == true) {
+		if ($this->settings['playa']['do_override'] == true) {
 			// PLAYA SPECIFIC FUNCTION
-			if($EE->TMPL->tagparts[0] == 'playa' &&
+			if ($EE->TMPL->tagparts[0] == 'playa' &&
 				isset($EE->TMPL->tagparams['fixed_order']) && 
 				$EE->TMPL->tagparams['fixed_order'] !== ''
 			) {
@@ -151,14 +150,14 @@ class Nsm_turbo_channels_ext
 							'entry_dates'		=> TRUE,
 							);
 
-		if ($disable){
-			if (strpos($disable, '|') !== FALSE){
-				foreach (explode("|", $disable) as $val){
-					if (isset($Channel->enable[$val])){
+		if ($disable) {
+			if (strpos($disable, '|') !== FALSE) {
+				foreach (explode("|", $disable) as $val) {
+					if (isset($Channel->enable[$val])) {
 						$Channel->enable[$val] = FALSE;
 					}
 				}
-			}elseif (isset($Channel->enable[$disable])){
+			} elseif (isset($Channel->enable[$disable])){
 				$Channel->enable[$disable] = FALSE;
 			}
 		}
@@ -171,7 +170,7 @@ class Nsm_turbo_channels_ext
 		// set the table in the db class
 		$EE->db->from('channel_titles AS t');
 		// are we using categories? then make select distinct on entries
-		if($Channel->cat_request == true){
+		if ($Channel->cat_request == true) {
 			$EE->db->distinct(true);
 		}
 
@@ -179,30 +178,30 @@ class Nsm_turbo_channels_ext
 		$EE->db->select( ($db_ref !== '' ? "/* {$db_ref} */ " : '') .'t.entry_id, t.site_id, t.channel_id', false);
 
 		// are we needing entry meta?
-		if($Channel->enable['entry_meta'] == true){
+		if ($Channel->enable['entry_meta'] == true) {
 			$EE->db->select('t.forum_topic_id, t.author_id, t.ip_address, t.title, t.url_title, t.status, t.sticky, t.site_id as entry_site_id');
-			$EE->db->order_by('t.sticky', 'desc');
+			//$EE->db->order_by('t.sticky', 'desc');
 		}
 		// are we needing entry dates?
-		if($Channel->enable['entry_dates'] == true){
+		if ($Channel->enable['entry_dates'] == true) {
 			$EE->db->select('t.dst_enabled, t.entry_date, t.year, t.month, t.day, t.edit_date, t.expiration_date');
-			$EE->db->order_by('t.entry_date', 'desc');
+			//$EE->db->order_by('t.entry_date', 'desc');
 		}
 		// are we needing view counts?
-		if($Channel->enable['view_counts'] == true){
+		if ($Channel->enable['view_counts'] == true) {
 			$EE->db->select('t.view_count_one, t.view_count_two, t.view_count_three, t.view_count_four');
 		}
 		// are we needing comments info?
-		if($Channel->enable['comments'] == true){
+		if ($Channel->enable['comments'] == true) {
 			$EE->db->select('t.allow_comments, t.comment_expiration_date, t.recent_comment_date, t.comment_total');
 		}
 		// do we want channel meta?
-		if($Channel->enable['channel_meta'] == true){
+		if ($Channel->enable['channel_meta'] == true) {
 			$EE->db->join('exp_channels AS w', 'w.channel_id = t.channel_id', 'left');
 			$EE->db->select('w.channel_title, w.channel_name, w.channel_url, w.comment_url, w.comment_moderate, w.channel_html_formatting, w.channel_allow_img_urls, w.channel_auto_link_urls, w.comment_system_enabled');
 		}
 		// do we want member info?
-		if($Channel->enable['members'] == true){
+		if ($Channel->enable['members'] == true) {
 			$EE->db->join('members AS m', 'm.member_id = t.author_id', 'left');
 			$EE->db->select('m.username, m.email, m.url, m.screen_name, m.location, m.occupation, m.interests, 
 							m.aol_im, m.yahoo_im, m.msn_im, m.icq, m.signature, m.sig_img_filename, m.sig_img_width, m.sig_img_height,
@@ -210,35 +209,37 @@ class Nsm_turbo_channels_ext
 							m.group_id, m.member_id, m.bday_d, m.bday_m, m.bday_y, m.bio');
 		}
 		// do we want member data?
-		if($Channel->enable['member_data'] == true){
+		if ($Channel->enable['member_data'] == true) {
 			$EE->db->join('member_data AS md', 'md.member_id = t.author_id', 'left');
 			$EE->db->select('md.*');
 		}
 		// do we want custom field data?
-		if($Channel->enable['custom_fields'] == true){
+		if ($Channel->enable['custom_fields'] == true) {
 			$EE->db->join('channel_data AS wd', 'wd.entry_id = t.entry_id', 'left');
 			// we want to include custom fields. now check for the custom_field param
 			$channel_fields_param = $EE->TMPL->fetch_param('custom_fields', "");
-			if($channel_fields_param !== ''){
+			if ($channel_fields_param !== '') {
 				$custom_field_names = explode('|', $channel_fields_param);
 				// we want to force the retrieval of specific custom field data
 				$site_id = $EE->config->item('site_id');
 				// iterate over the columns we want and add them to the sql query
-				for($i=0,$m=count($custom_field_names); $i<$m; $i+=1){
-					if(!empty($Channel->cfields[ $site_id ][ $custom_field_names[ $i ] ])){
+				for ($i=0,$m=count($custom_field_names); $i<$m; $i+=1) {
+					if (!empty($Channel->cfields[ $site_id ][ $custom_field_names[ $i ] ])) {
 						$field_id = $Channel->cfields[ $site_id ][ $custom_field_names[ $i ] ];
 						$EE->db->select('wd.field_id_'.$field_id.', wd.field_ft_'.$field_id);
 					}
 				}
-			}else{
+			} else {
 				$EE->db->select('wd.*');
 			}
 		}
 
 		$EE->db->where_in('t.entry_id', $EE->session->cache['channel']['entry_ids']);
 
-		$EE->db->order_by('t.entry_id', 'desc');
-
+		// CI->AR hack. need to stop the DB from messing with our order
+		$EE->db->_protect_identifiers = false;
+		$EE->db->order_by("FIELD(`t`.`entry_id`, '".implode("','", $EE->session->cache['channel']['entry_ids'])."')");
+		$EE->db->_protect_identifiers = true;
 		$sql = $EE->db->_compile_select();
 
 		// clear db cache
@@ -251,13 +252,13 @@ class Nsm_turbo_channels_ext
 	public function channel_entries_query_result($Channel, $query_result) {
 		
 		// disabled? return now.
-		if( empty($this->settings['enabled']) ) {
+		if (empty($this->settings['enabled'])) {
 			return $query_result;
 		}
 		
 		$disable_param = $Channel->EE->TMPL->fetch_param('disable');
 		$cfields_param = $Channel->EE->TMPL->fetch_param('custom_fields');
-		if($disable_param == false && $cfields_param == false) {
+		if ($disable_param == false && $cfields_param == false) {
 			return $query_result;
 		}
 
@@ -329,16 +330,16 @@ class Nsm_turbo_channels_ext
 			'bio' => ''
 		);
 		
-		if(strpos($disable_param, 'custom_fields') || $cfields_param) {
-			if( ! empty($Channel->dfields[$query_result[0]['site_id']]) ) {
+		if (strpos($disable_param, 'custom_fields') || $cfields_param) {
+			if (! empty($Channel->dfields[$query_result[0]['site_id']])) {
 				foreach ($Channel->dfields[$query_result[0]['site_id']] as $dkey => $dval) {
 					$default_row['field_id_'.$dval] = '';
 					$default_row['field_dt_'.$dval] = '';
-			}
+				}
 			}
 		}
 
-		for($i=0, $m=count($query_result); $i<$m; $i+=1) {
+		for ($i=0, $m=count($query_result); $i<$m; $i+=1) {
 			$query_result[$i] = array_merge($default_row, $query_result[$i]);
 		}
 
@@ -375,26 +376,24 @@ class Nsm_turbo_channels_ext
 		);
 
 		// Are there settings posted from the form?
-		if($data = $EE->input->post(__CLASS__))
-		{
-			if(!isset($data["enabled"]))
+		if ($data = $EE->input->post(__CLASS__)) {
+			if (!isset($data["enabled"])) {
 				$data["enabled"] = TRUE;
+			}
 
 			foreach ($data["channels"] as &$channel) {
-				if(!isset($channel["enabled_fields"]))
+				if (!isset($channel["enabled_fields"])) {
 					$channel["enabled_fields"] = array();
+				}
 			}
 
 			// No errors ?
-			if(! $vars['error'] = validation_errors())
-			{
+			if (! $vars['error'] = validation_errors()) {
 				$this->settings = $this->_saveSettings($data);
 				$EE->session->set_flashdata('message_success', $this->name . ": ". $EE->lang->line('alert.success.extension_settings_saved'));
 				$EE->functions->redirect(BASE.AMP.'C=addons_extensions');
 			}
-		}
-		else
-		{
+		} else {
 			// Sometimes we may need to parse the settings
 			$data = $this->settings;
 		}
@@ -429,20 +428,18 @@ class Nsm_turbo_channels_ext
 		$default_settings = $this->default_site_settings;
 
 		// No site id, use the current one.
-		if(!$site_id)
+		if (!$site_id) {
 			$site_id = SITE_ID;
+		}
 
 		$default_settings['default_site_meta']['author'] = $EE->config->item('webmaster_name');
 		$default_settings['default_site_meta']['site_title'] = $EE->config->item('site_name');
 
 		// Channel preferences (if required)
-		if(isset($default_settings["channels"]))
-		{
+		if (isset($default_settings["channels"])) {
 			$channels = $EE->channel_model->get_channels($site_id);
-			if ($channels->num_rows() > 0)
-			{
-				foreach($channels->result() as $channel)
-				{
+			if ($channels->num_rows() > 0) {
+				foreach ($channels->result() as $channel) {
 					$default_settings['channels'][$channel->channel_id] = $this->_buildChannelSettings($channel->channel_id);
 				}
 			}
@@ -570,12 +567,12 @@ class Nsm_turbo_channels_ext
 
 		if (
 			// if there are settings in the settings cache
-			isset($this->cache[SITE_ID]['settings']) === TRUE 
+			! empty($this->cache['settings'])
 			// and we are not forcing a refresh
-			AND $refresh != TRUE
+			&& $refresh != TRUE
 		) {
 			// get the settings from the session cache
-			$settings = $this->cache[SITE_ID]['settings'];
+			$settings = $this->cache['settings'];
 		} else {
 			$settings_query = $EE->db->get_where(
 									self::$settings_table,
@@ -594,9 +591,8 @@ class Nsm_turbo_channels_ext
 				$settings = json_decode($settings_query->row()->settings, TRUE);
 				$this->_saveSettingsToSession($settings);
 				log_message('info', __CLASS__ . " : " . __METHOD__ . ' getting settings from session');
-			}
-			// no settings for the site
-			else {
+			} else {
+				// no settings for the site
 				$settings = $this->_buildDefaultSiteSettings(SITE_ID);
 				$this->_saveSettings($settings);
 				log_message('info', __CLASS__ . " : " . __METHOD__ . ' creating new site settings');
@@ -606,7 +602,7 @@ class Nsm_turbo_channels_ext
 
 		// Merge config settings
 		foreach ($settings as $key => $value) {
-			if($EE->config->item($this->addon_id . "_" . $key)) {
+			if ($EE->config->item($this->addon_id . "_" . $key)) {
 				$settings[$key] = $EE->config->item($this->addon_id . "_" . $key);
 			}
 		}
@@ -674,7 +670,9 @@ class Nsm_turbo_channels_ext
 	 * @return array the settings unmodified
 	 */
 	private function _saveSettingsToSession($settings) {
-		$this->cache[SITE_ID]['settings'] = $settings;
+		$EE =& get_instance();
+		$EE->session->cache[$this->addon_id][SITE_ID]['settings'] = $settings;
+		$this->cache['settings'] = $settings;
 		return $settings;
 	}
 
@@ -697,7 +695,7 @@ class Nsm_turbo_channels_ext
 
 		$EE =& get_instance();
 
-		if($hooks == FALSE && isset($this->hooks) == FALSE) {
+		if ($hooks == FALSE && isset($this->hooks) == FALSE) {
 			return;
 		}
 
